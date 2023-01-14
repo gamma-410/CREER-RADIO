@@ -3,12 +3,13 @@
 {% block body %}
 
 <main>
-    <div class="text-center first-profile-box">
-        <img class="shadow-small rounded-circle" width="30%"
-            src="https://gravatar.com/avatar/{{ roomdata.md5 }}?s=1000">
-    </div>
-    <h4 class="text-center mb-5">{{ roomdata.username }}</h4>
-
+    <a class="a" href="/users/{{ userdata.id }}">
+        <div class="text-center first-profile-box">
+            <img class="shadow-small rounded-circle" width="30%"
+                src="https://gravatar.com/avatar/{{ roomdata.md5 }}?s=1000">
+        </div>
+        <h4 class="text-center mb-5">{{ roomdata.username }}</h4>
+    </a>
     <div class="title text-center mb-3">
         {{ roomdata.title }}
     </div>
@@ -40,11 +41,19 @@
             <div class="modal-body">
                 <div class="flex-menu">
                     <button id="join-trigger" type="button" class="btn btn-1 btn-dark m-2">
-                        <i class="bi bi-mic"></i>
+                        <i class="bi bi-door-open"></i>
                     </button>
-                    <button id="leave-trigger" type="button" class="btn btn-1 btn-dark m-2">
+                    <button id="leave-trigger" type="button" class="d-none btn btn-1 btn-dark m-2">
+                        <i class="bi bi-door-closed"></i>
+                    </button>
+                    <button id="unmute" type="button" class="btn btn-1 btn-dark m-2">
                         <i class="bi bi-mic-mute"></i>
                     </button>
+                    <button id="mute" type="button" class="d-none btn btn-1 btn-dark m-2">
+                        <i class="bi bi-mic"></i>
+                    </button>
+
+
                     {% if current_user.username == roomdata.username %}
                     <a href="/del/{{ roomdata.id }}">
                         <button id="leave-trigger" type="button" class="btn btn-1 btn-outline-dark m-2">
@@ -67,6 +76,8 @@
         const leaveTrigger = document.getElementById('leave-trigger');
         const remoteAudios = document.getElementById('remote-streams');
         const roomId = document.getElementById('room-id');
+        const muteBtn = document.getElementById('mute');
+        const unmuteBtn = document.getElementById('unmute');
         let myPeerId = "{{ current_user.username }}";
 
         const localStream = await navigator.mediaDevices
@@ -99,12 +110,15 @@
             });
 
             room.once('open', peerId => {
-                alert("ルームに参加しました!")
+                localStream.getAudioTracks().forEach(track => (track.enabled = false));
+                joinTrigger.classList.add("d-none");
+                leaveTrigger.classList.remove("d-none");
+                alert("ルームに参加しました!\n(マイクはOFFです。)")
                 myPeerId = peer.id;
             });
 
             room.on('peerJoin', peerId => {
-                alert(`${peerId} が入室しました!!`)
+                alert(`${peerId} が入室しました!`)
             });
 
             room.on('stream', async stream => {
@@ -126,19 +140,35 @@
                 remoteAudio.srcObject.getTracks().forEach(track => track.stop());
                 remoteAudio.srcObject = null;
                 remoteAudio.remove();
-                alert(`${peerId} が退出しました`)
+                alert(`${peerId} が退出しました。`)
             });
 
-            room.once('close', () => {
-                sendTrigger.removeEventListener('click', onClickSend);
-                Array.from(remoteVideos.children).forEach(remoteVideo => {
-                    remoteVideo.srcObject.getTracks().forEach(track => track.stop());
-                    remoteVideo.srcObject = null;
-                    remoteVideo.remove();
-                });
-            });
+            leaveTrigger.addEventListener('click', () => room.close(), { once: true })
 
-            leaveTrigger.addEventListener('click', () => room.close(), { once: true });
+            // ミュート機能等
+            joinTrigger.addEventListener('click', () => {
+                localStream.getAudioTracks().forEach(track => (track.enabled = false));
+                joinTrigger.classList.add("d-none");
+                leaveTrigger.classList.remove("d-none");
+                mute.classList.add("d-none");
+                unmute.classList.remove("d-none");
+            })
+            leaveTrigger.addEventListener('click', () => {
+                leaveTrigger.classList.add("d-none");
+                joinTrigger.classList.remove("d-none");
+            })
+
+            mute.addEventListener('click', () => {
+                localStream.getAudioTracks().forEach(track => (track.enabled = false));
+                mute.classList.add("d-none");
+                unmute.classList.remove("d-none");
+            });
+            unmute.addEventListener('click', () => {
+                localStream.getAudioTracks().forEach(track => (track.enabled = true));
+                unmute.classList.add("d-none");
+                mute.classList.remove("d-none");
+            });
+            // ここまで
         });
         peer.on('error', console.error);
     })();

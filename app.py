@@ -193,7 +193,8 @@ def create():
 @app.route('/room/<string:username>')
 def room(username):
     roomdata = Post.query.filter_by(username=username).first()
-    return render_template("room.html", roomdata=roomdata)
+    userdata = User.query.filter_by(username=roomdata.username).first()
+    return render_template("room.html", roomdata=roomdata, userdata=userdata)
 
 
 @app.route('/del/<int:id>')
