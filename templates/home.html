@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block body %}
+<nav class="navbar navbar-light bg-light p-3 mb-4 shadow sticky-top">
+    <div class="container justify-content-center">
+        <a class="navbar-brand" href="/home">
+            <img src="{{ url_for('static', filename='images/logo.svg') }}" alt="LOGO" width="80">
+        </a>
+    </div>
+</nav>
+
+
+<div class="container d-flex flex-wrap justify-content-around empty-container">
+    {% for post in posts %}
+    <a class="a" href="/room/{{ post.username }}">
+        <div class="card shadow mb-4">
+            <img src="https://gravatar.com/avatar/{{ post.md5 }}?s=1000" class="card-img-top">
+            <div class="card-body">
+                <p class="card-text"><b>{{ post.title }}</b></p>
+                <small>{{ post.username }}</small>
+            </div>
+        </div>
+    </a>
+    {% endfor %}
+</div>
+
+
+<div class="fixed-bottom mb-3">
+    <div class="section1 text-center">
+        <button class="btn btn-2 btn-dark" data-bs-toggle="modal" data-bs-target="#menu">
+            <i class="bi bi-three-dots"></i>
+        </button>
+    </div>
+</div>
+
+<div class="modal fade" id="menu" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="flex-menu">
+                    <a href="/home">
+                        <button type="button" class="btn btn-1 btn-outline-dark m-2">
+                            <i class="bi bi-house-door"></i>
+                        </button>
+                    </a>
+                    <a href="/create">
+                        <button type="button" class="btn btn-1 btn-dark m-2">
+                            <i class="bi bi-plus-circle"></i>
+                        </button>
+                    </a>
+                    <a href="/users/{{ current_user.id }}">
+                        <button type="button" class="btn btn-1 btn-outline-dark m-2">
+                            <i class="bi bi-person-circle"></i>
+                        </button>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+<script>
+    var $grid = $('.empty-container'),
+        emptyCells = [],
+        i;
+
+    for (i = 0; i < $grid.find('.card').length; i++) {
+        emptyCells.push($('<div>', { class: 'a-width is-empty' }));
+    }
+
+    $grid.append(emptyCells);
+</script>
+{% endblock %}

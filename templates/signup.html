@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block body %}
+<main>
+    <div class="text-center first-image-box">
+        <img width="60%" src="{{ url_for('static', filename='images/talk.svg') }}">
+    </div>
+    <div class="text-center first-logo-box">
+        <img width="35%" src="{{ url_for('static', filename='images/logo.svg') }}">
+    </div>
+
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    {% for msg in messages %}
+    <div class="alert alert-secondary" role="alert">
+        {{ msg }}
+    </div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+
+    <form method="POST" action="/signup" enctype="multipart/form-data" autocomplete="off">
+        <div class="mb-3">
+            <input name="username" class="form-control border-0" placeholder="Username">
+        </div>
+        <div class="mb-3">
+            <input name="email" class="form-control border-0" placeholder="Email Address">
+        </div>
+        <div class="mb-3">
+            <input name="password" class="form-control border-0" placeholder="Password">
+        </div>
+        <div class="button-flex">
+            <input type="submit" class="w-100 btn btn-dark" value="Register">
+        </div>
+    </form>
+
+    <br>
+
+    <a class="text-decoration-none text-center text-dark small login-a-link" href="/">
+        <p>ログインはこちら</p>
+    </a>
+</main>
+{% endblock %}

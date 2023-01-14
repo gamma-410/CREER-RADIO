@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block body %}
+<nav class="navbar navbar-light bg-light p-3 mb-4 shadow sticky-top">
+    <div class="container justify-content-center">
+        <a class="navbar-brand" href="/home">
+            <img src="{{ url_for('static', filename='images/logo.svg') }}" alt="LOGO" width="80">
+        </a>
+    </div>
+</nav>
+
+<main>
+    <form method="POST" enctype="multipart/form-data">
+        <p><b>アイコン画像</b></p>
+        <p class="small"><a href="https://gravatar.com/" target="_blank" rel="noopener noreferrer">Gravatar</a>
+            を使用して変更できます。</p>
+        <p class="small">使用しているアドレス: {{ current_user.email }}</p>
+
+        <p><b>Bio</b></p>
+        <textarea name="detail" class="form-control form-control2" placeholder="あなたについて書いてください！">{{ current_user.detail }}</textarea>
+        <br>
+        <input type="submit" class="btn btn-dark w-100 mb-2" value="Save">
+    </form>
+    <a href="/users/{{ current_user.id }}"><button class="btn btn-outline-dark w-100">Cancel</button></a>
+</main>
+{% endblock %}

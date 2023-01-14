@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block body %}
+<nav class="navbar navbar-light bg-light p-3 mb-4 shadow sticky-top">
+    <div class="container justify-content-center">
+        <a class="navbar-brand" href="/home">
+            <img src="{{ url_for('static', filename='images/logo.svg') }}" alt="LOGO" width="80">
+        </a>
+    </div>
+</nav>
+
+<main>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    {% for msg in messages %}
+    <div class="alert alert-secondary" role="alert">
+        {{ msg }}
+    </div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+
+    <form method="POST" enctype="multipart/form-data" autocomplete="off">
+        <p><b>ルームを作成</b></p>
+        <div class="mb-3">
+            <p class="small">タイトル</p>
+            <input name="title" class="form-control border-0 forms" placeholder="トークテーマ">
+        </div>
+        <div class="mb-5">
+            <p class="small">詳細</p>
+            <textarea name="detail" class="form-control form-control2 forms" placeholder="どんなルームにしますか?"></textarea>
+        </div>
+        <input type="submit" class="btn btn-dark w-100 mb-2" value="Create !">
+    </form>
+
+    <a href="/home"><button class="btn btn-outline-dark w-100">Cancel</button></a>
+</main>
+{% endblock %}
