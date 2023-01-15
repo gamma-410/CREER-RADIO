@@ -198,11 +198,17 @@ def room(username):
 
 
 @app.route('/del/<int:id>')
+@login_required
 def delete(id):
-    post = Post.query.get(id)
-    db.session.delete(post)
-    db.session.commit()
-    return redirect('/home')
+    check = Post.query.filter_by(id=id).first()
+    if current_user.username == check.username:
+        post = Post.query.get(id)
+        db.session.delete(post)
+        db.session.commit()
+        return redirect('/home')
+    
+    else:
+        return redirect('/home')
 
 
 @app.route('/users/<int:id>')
